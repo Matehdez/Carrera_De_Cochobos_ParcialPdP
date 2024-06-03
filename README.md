@@ -1,7 +1,3 @@
-# ejercicio-alumno
+# CARRERA DE COCHOBOS
 
-## Integrantes
 
-- integrante1 (usuario github)
-- integrante2 (usuario github)
-...
