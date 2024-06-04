@@ -1,6 +1,7 @@
 module Library where
 import PdePreludat
 import GHC.Generics ((:.:)(unComp1))
+import Control.Monad.ST.Unsafe (unsafeDupableInterleaveST)
 
 
 ---Pistas-------------------------------
@@ -151,6 +152,71 @@ tramosGanados unaPista jinetes jinete = filter (esElMejorDelTramo jinete jinetes
 
 esElMejorDelTramo :: Jinete -> [Jinete] -> Tramo -> Bool
 esElMejorDelTramo unJinete jinetes unTramo = nombreJinete unJinete == elMejorDelTramo unTramo jinetes
+
+---Pto5------------------------------------------------------------------
+--Saber los nombres de los jinetes que pueden hacer un tramo dado en un tiempo indicado máximo..
+
+--Ej
+-- > quienesPueden (head bosqueTenebroso) 12 apocalipsis
+--["Gise","Mati","Alf"] (ver 4.a)
+
+quienesPueden :: Tramo -> Number -> [Jinete] -> [String]
+quienesPueden unTramo n jinetes = map nombreJinete (jinetesQuePueden unTramo n jinetes)
+
+jinetesQuePueden :: Tramo -> Number -> [Jinete] -> [Jinete]
+jinetesQuePueden unTramo n  = filter (tiempoMax unTramo n) 
+
+tiempoMax :: Tramo -> Number -> Jinete -> Bool
+tiempoMax unTramo n unJinete = tiempo (cochoboDeJinete unJinete) unTramo <= n
+
+---Pto6------------------------------------------------------------------
+--Obtener las estadísticas de una carrera, dada la pista y la lista de jinetes. 
+--Estas estadísticas deben estar representadas por una lista de tuplas, 
+--cada tupla siendo de la forma: (nombre, tramosGanados, tiempoTotal)
+
+---Ej
+-- > estadisticas bosqueTenebroso apocalipsis
+--[("Leo",0,150),("Gise",3,85),("Mati",2,138),("Alf",0,141)]
+
+type Estadisticas = (String, Number, Number)
+
+estadisticas :: Pista -> [Jinete] -> [Estadisticas]
+estadisticas unaPista jinetes = map (jineteEnCarrera unaPista jinetes) jinetes
+
+jineteEnCarrera :: Pista-> [Jinete] -> Jinete -> Estadisticas
+jineteEnCarrera unaPista jinetes unJinete  = (nombreJinete unJinete, tramosGanadosEnNumero unaPista jinetes unJinete, tiempoTotal unaPista (cochoboDeJinete unJinete))
+
+tramosGanadosEnNumero :: Pista -> [Jinete] -> Jinete -> Number
+tramosGanadosEnNumero unaPista jinetes jinete = length (tramosGanados unaPista jinetes jinete) 
+
+---Pto7------------------------------------------------------------------
+-- Saber si una carrera fue pareja. 
+--Esto es así si cada chocobo tuvo un tiempo total de hasta 10% menor que el que llegó a continuación.
+
+---Ej:
+-- > fuePareja bosqueTenebroso apocalipsis
+-- False (entre Gise y Mati, 1a y 2o respectivamente, hay más de 10% de diferencia)
+
+fuePareja :: Pista -> [Jinete] -> Bool
+fuePareja unaPista jinetes = foldl (\booleano jinete -> booleano && tiempoEsMenor unaPista jinete (head (tail jinetes))) True (podio unaPista jinetes)
+
+porcentajeParejo:: Number
+porcentajeParejo = 0.1
+
+tiempoEsMenor :: Pista -> Jinete -> Jinete -> Bool
+tiempoEsMenor unaPista jineteA jineteB = tiempoTotal unaPista (cochoboDeJinete jineteA) < porcentajeParejo * tiempoTotal unaPista (cochoboDeJinete jineteB)
+
+---Pto8------------------------------------------------------------------
+--Definir un chocobo plateado que tenga las mejores características de los otros 
+--(mayor fuerza, menor peso, mayor velocidad), 
+--teniendo en cuenta que no sea necesario cambiar su definición si se altera un valor de los anteriores.
+
+---EJ:
+-- > plateado
+-- (5,3,6)
+
+---PINCHO HASTA ACA LLEGUE XDXD
+
 
 
 
