@@ -23,7 +23,7 @@ type Cochobo = (Number, Number, Number)
 amarillo = (5, 3, 3)
 negro = (4, 4, 4)
 blanco = (2, 3, 6)
-rojo = (3, 3, 4)
+rojo = (3, 4, 4)
 
 ---FuncionInicializacion-------------------------
 fuerza (f,_,_) = f
@@ -110,6 +110,6 @@ cochoboDeJinete :: Jinete -> Cochobo
 cochoboDeJinete (_, unCochobo) = unCochobo
 
 compararTiempos :: Pista-> Jinete -> Jinete -> Bool
-compararTiempos unaPista jineteA jineteB = tiempoTotal unaPista (cochoboDeJinete jineteA) > tiempoTotal unaPista (cochoboDeJinete jineteB)
+compararTiempos unaPista jineteA jineteB = tiempoTotal unaPista (cochoboDeJinete jineteA) < tiempoTotal unaPista (cochoboDeJinete jineteB)
 
--- Por alguna razón la funcion `podio` falla
+
