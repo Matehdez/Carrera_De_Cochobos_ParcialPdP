@@ -2,6 +2,7 @@ module Library where
 import PdePreludat
 import GHC.Generics ((:.:)(unComp1))
 
+
 ---Pistas-------------------------------
 type Pista  = [Tramo]
 type Tramo = (Number,Cochobo->Number)
@@ -111,5 +112,46 @@ cochoboDeJinete (_, unCochobo) = unCochobo
 
 compararTiempos :: Pista-> Jinete -> Jinete -> Bool
 compararTiempos unaPista jineteA jineteB = tiempoTotal unaPista (cochoboDeJinete jineteA) < tiempoTotal unaPista (cochoboDeJinete jineteB)
+
+---Pto4------------------------------------------------------------------
+---a
+--Realizar una función que dado un tramo y una lista de jinetes, 
+--retorna el nombre de aquel que lo recorrió en el menor tiempo.
+
+---Ej
+-- > elMejorDelTramo (head bosqueTenebroso) apocalipsis
+--"Gise" (Gise tarda 8, mientras que Leo tarda 16 y Mati y Alf tardan 12)
+
+elMejorDelTramo :: Tramo -> [Jinete] -> String
+elMejorDelTramo unTramo  = nombreJinete.head.quickSort (compararTramos unTramo)
+
+compararTramos ::  Tramo-> Jinete -> Jinete -> Bool
+compararTramos unTramo jineteA jineteB = tiempo (cochoboDeJinete jineteA) unTramo < tiempo (cochoboDeJinete jineteB) unTramo
+
+nombreJinete :: Jinete -> String
+nombreJinete (nombre, _ ) = nombre
+
+---b
+--Dada una pista y una lista de jinetes, 
+--saber el nombre del jinete que ganó más tramos (que no quiere decirque haya ganado la carrera).
+
+--Ej:
+-- > elMasWinner pantanoDelDestino apocalipsis
+-- "Leo" (gana 2 tramos, el resto gana 1 o ninguno)
+
+
+elMasWinner :: Pista -> [Jinete] -> String
+elMasWinner unaPista  =  nombreJinete.head.quickSort (ganoMasTramos unaPista) 
+
+ganoMasTramos :: Pista -> Jinete -> Jinete -> Bool
+ganoMasTramos unaPista jineteA jineteB = not (null (tramosGanados unaPista [jineteA, jineteB] jineteA))
+
+tramosGanados :: Pista -> [Jinete] -> Jinete -> Pista
+tramosGanados unaPista jinetes jinete = filter (esElMejorDelTramo jinete jinetes) unaPista
+
+esElMejorDelTramo :: Jinete -> [Jinete] -> Tramo -> Bool
+esElMejorDelTramo unJinete jinetes unTramo = nombreJinete unJinete == elMejorDelTramo unTramo jinetes
+
+
 
 
