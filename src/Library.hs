@@ -92,8 +92,8 @@ correccionVelocidad (_,f) = f
 tiemposDeCochobo :: Cochobo -> Pista -> [Number]
 tiemposDeCochobo unCochobo = map (tiempo unCochobo)
 
-tiempoTotal :: Pista -> Cochobo -> Number
-tiempoTotal unaPista unCochobo = sum (tiemposDeCochobo unCochobo unaPista)
+tiempoTotal :: Cochobo -> Pista -> Number
+tiempoTotal  unCochobo unaPista = sum (tiemposDeCochobo unCochobo unaPista)
 
 ---Pto3------------------------------------------------------------------
 --Obtener el podio de una carrera, 
@@ -112,7 +112,7 @@ cochoboDeJinete :: Jinete -> Cochobo
 cochoboDeJinete (_, unCochobo) = unCochobo
 
 compararTiempos :: Pista-> Jinete -> Jinete -> Bool
-compararTiempos unaPista jineteA jineteB = tiempoTotal unaPista (cochoboDeJinete jineteA) < tiempoTotal unaPista (cochoboDeJinete jineteB)
+compararTiempos unaPista jineteA jineteB = tiempoTotal (cochoboDeJinete jineteA) unaPista  < tiempoTotal (cochoboDeJinete jineteB) unaPista 
 
 ---Pto4------------------------------------------------------------------
 ---a
@@ -131,6 +131,11 @@ compararTramos unTramo jineteA jineteB = tiempo (cochoboDeJinete jineteA) unTram
 
 nombreJinete :: Jinete -> String
 nombreJinete (nombre, _ ) = nombre
+
+---ORDEN SUPERIOR DE FUNCION COMPARAR
+comparar :: Ord a => (a -> b -> Number) -> a -> a -> b -> Bool
+comparar criterio a c b = criterio a b > criterio c b
+
 
 ---b
 --Dada una pista y una lista de jinetes, 
@@ -184,7 +189,7 @@ estadisticas :: Pista -> [Jinete] -> [Estadisticas]
 estadisticas unaPista jinetes = map (jineteEnCarrera unaPista jinetes) jinetes
 
 jineteEnCarrera :: Pista-> [Jinete] -> Jinete -> Estadisticas
-jineteEnCarrera unaPista jinetes unJinete  = (nombreJinete unJinete, tramosGanadosEnNumero unaPista jinetes unJinete, tiempoTotal unaPista (cochoboDeJinete unJinete))
+jineteEnCarrera unaPista jinetes unJinete  = (nombreJinete unJinete, tramosGanadosEnNumero unaPista jinetes unJinete, tiempoTotal (cochoboDeJinete unJinete) unaPista )
 
 tramosGanadosEnNumero :: Pista -> [Jinete] -> Jinete -> Number
 tramosGanadosEnNumero unaPista jinetes jinete = length (tramosGanados unaPista jinetes jinete) 
@@ -204,7 +209,7 @@ porcentajeParejo:: Number
 porcentajeParejo = 0.1
 
 tiempoEsMenor :: Pista -> Jinete -> Jinete -> Bool
-tiempoEsMenor unaPista jineteA jineteB = tiempoTotal unaPista (cochoboDeJinete jineteA) < porcentajeParejo * tiempoTotal unaPista (cochoboDeJinete jineteB)
+tiempoEsMenor unaPista jineteA jineteB = tiempoTotal (cochoboDeJinete jineteA) unaPista  < porcentajeParejo * tiempoTotal (cochoboDeJinete jineteB) unaPista 
 
 ---Pto8------------------------------------------------------------------
 --Definir un chocobo plateado que tenga las mejores características de los otros 
